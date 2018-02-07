@@ -76,14 +76,14 @@
 
                 for (var j = 0; j < backends.length; j++) {
                     var backend = backends[j].split(/\s+/);
-                    var name = backend[0].match(/(.*?)\((.*?)\)/);
+                    var name = backend[0].split(/\./);
 
                     gbackends[name[1]] = {
                         name: name[1],
-                        config: name[2],
-                        refs: backend[1],
-                        admin: backend[2],
-                        probe: backend[3]
+                        config: name[0],
+                        refs: backend[0],
+                        admin: backend[1],
+                        probe: backend[2]
                     };
                 }
             });
