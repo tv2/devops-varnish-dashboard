@@ -1,0 +1,10 @@
+.tv2-title {
+  color: white;
+  font-weight: bold;
+  font-size: 100%;
+  position: absolute;
+  background-color: #222;
+  overflow: visible;
+  padding: 3px 12px 7px 12px;
+  border-radius: 0px 0px 4px 4px;
+}
