@@ -1,7 +1,7 @@
 (function(app) {
     'use strict';
 
-    var requestPlot, bandwidthPlot, requestData = [], bandwidthData = [], statusInterval, healthInterval, statsInterval;
+    var requestPlot, bandwidthPlot, requestData = [], bandwidthData = [], statusInterval, healthInterval, statsInterval, oldBackendHealth;
 
     app.ready(function() {
         if (app.isGroupView()) {
@@ -88,46 +88,50 @@
                 }
             });
 
-            $('#dashboard-server-info .server-backends').remove();
+            if (oldBackendHealth != Object.toJSON(gbackends)) {
+                $('#dashboard-server-info .server-backends').remove();
 
-            var html;
-            html  = '<div class="panel panel-default server-backends">';
-            html += '  <div class="panel-heading">';
-            html += '      Varnish Backends';
-            html += '  </div>';
-            html += '  <div class="panel-body">';
-            html += '    <table class="table table-hover">';
-            html += '      <thead>';
-            html += '        <tr>';
-            html += '          <th style="width:20px"><img src="assets/images/status-online.png" alt=""></th>';
-            html += '          <th>Name</th>';
-            html += '          <th>Config</th>';
-            html += '        </tr>';
-            html += '      </thead>';
-            html += '      <tbody>';
+                var html;
+                html  = '<div class="panel panel-default server-backends">';
+                html += '  <div class="panel-heading">';
+                html += '      Varnish Backends';
+                html += '  </div>';
+                html += '  <div class="panel-body">';
+                html += '    <table class="table table-hover">';
+                html += '      <thead>';
+                html += '        <tr>';
+                html += '          <th style="width:20px"><img src="assets/images/status-online.png" alt=""></th>';
+                html += '          <th>Name</th>';
+                html += '          <th>Config</th>';
+                html += '        </tr>';
+                html += '      </thead>';
+                html += '      <tbody>';
 
-            for (var idx in gbackends) {
-                html += '<tr>';
+                for (var idx in gbackends) {
+                    html += '<tr>';
 
-                if (gbackends[idx].probe.match(/^Healthy/i)) {
-                    html += '<td><img src="assets/images/status-online.png" alt=""></td>';
-                } else {
-                    html += '<td><img src="assets/images/status-busy.png" alt=""></td>';
+                    if (gbackends[idx].probe.match(/^Healthy/i)) {
+                        html += '<td><img src="assets/images/status-online.png" alt=""></td>';
+                    } else {
+                        html += '<td><img src="assets/images/status-busy.png" alt=""></td>';
+                    }
+
+                    html += '<td>' + gbackends[idx].name + '</td>';
+                    html += '<td>' + gbackends[idx].config + '</td>';
+                    html += '</tr>';
                 }
 
-                html += '<td>' + gbackends[idx].name + '</td>';
-                html += '<td>' + gbackends[idx].config + '</td>';
-                html += '</tr>';
+                html += '      </tbody>';
+                html += '    </table>';
+                html += '  </div>';
+                html += '</div>';
+
+                $('#dashboard-server-info').append(html);
+
+                healthInterval = setTimeout(getBackendHealth, app.getConfig('update_freq'));
             }
 
-            html += '      </tbody>';
-            html += '    </table>';
-            html += '  </div>';
-            html += '</div>';
-
-            $('#dashboard-server-info').append(html);
-
-            healthInterval = setTimeout(getBackendHealth, app.getConfig('update_freq'));
+            oldBackendHealth = Object.toJSON(gbackends);
         }, 'text')
     };
 
