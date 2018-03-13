@@ -88,7 +88,7 @@
                 }
             });
 
-            if (oldBackendHealth != Object.toJSON(gbackends)) {
+            if (oldBackendHealth != JSON.stringify(gbackends)) {
                 $('#dashboard-server-info .server-backends').remove();
 
                 var html;
@@ -128,10 +128,10 @@
 
                 $('#dashboard-server-info').append(html);
 
-                healthInterval = setTimeout(getBackendHealth, app.getConfig('update_freq'));
             }
 
-            oldBackendHealth = Object.toJSON(gbackends);
+            healthInterval = setTimeout(getBackendHealth, app.getConfig('update_freq'));
+            oldBackendHealth = JSON.stringify(gbackends);
         }, 'text')
     };
 
